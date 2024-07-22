@@ -1,16 +1,14 @@
 import { MongoClient } from "mongodb";
+import mongoose from 'mongoose';
 import dotenv from "dotenv"
+
 dotenv.config();
 
-const client = new MongoClient(process.env.ATLAS_URI);
+const uri = process.env.ATLAS_URI 
 
-let conn;
-try {
-  conn = await client.connect();
-} catch (e) {
-  console.error(e);
-}
+mongoose.connect(uri);
 
-let db = conn.db("sample_training");
+let db = mongoose.connection
+
 
 export default db;
