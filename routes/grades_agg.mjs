@@ -1,6 +1,6 @@
 import express from "express";
 import db from "../db/conn.mjs";
-import { ObjectId } from "mongodb";
+import Grade from "../models/grades.mjs";
 import mongoose from 'mongoose';
 
 const router = express.Router();
@@ -21,9 +21,9 @@ const router = express.Router();
 
 // Get the weighted average of a specified learner's grades, per class
 router.get("/learner/:id/avg-class", async (req, res) => {
-  let collection = await db.collection("grades");
+try{
 
-  let result = await collection
+  let result = await Grade
     .aggregate([
       {
         $match: { learner_id: Number(req.params.id) },
@@ -76,11 +76,13 @@ router.get("/learner/:id/avg-class", async (req, res) => {
           },
         },
       },
-    ])
-    .toArray();
+    ]);
 
   if (!result) res.send("Not found").status(404);
-  else res.send(result).status(200);
+  res.send(result).status(200);
+}catch (error){
+  res.status(500).send(error.message);
+}
 });
 
 export default router;
